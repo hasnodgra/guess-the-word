@@ -33,7 +33,7 @@ guessLetterButton.addEventListener("click", function (e) {
     if (goodGuess){
         makeGuess(guess);
     }
-    letterInput.value=""; //empty the value of the inputs
+    letterInput.value= ""; //empty the value of the inputs
 });
 
 const validateInput = function (input) {
@@ -57,7 +57,7 @@ const makeGuess = function (guess) {
     if (guessedLetters.includes(guess)){ //checking if guessedLetters array already contains that letter
         message.innerText = "You just picked that. Try again."
     } else {
-        guessedLetters.push(guests);
+        guessedLetters.push(guess);
         console.log(guessedLetters);
     }
 };
