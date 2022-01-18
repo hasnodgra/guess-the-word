@@ -12,52 +12,91 @@ const word = "magnolia"; //this will serve as a test word until API later
 const guessedLetters = [];
 
 //letter placeholders for guessing
-const placeholder = function (word) { //create a fucntion to upate <p>'s inner text for "words-in-progress" element
+const placeholder = function (word) {
     const placeholderLetters = [];
     for (const letter of word) {
-        console.log(letter);
-        placeholderLetters.push("●"); //push adds new items to array
+      console.log(letter);
+      placeholderLetters.push("●");
     }
     wordInProgress.innerText = placeholderLetters.join("");
-}; //an array that was joined back to a string
-
-placeholder(word); //"call the function and pass it the word"
-
-//event listener for the button
-guessLetterButton.addEventListener("click", function (e) {
-    e.preventDefault(); //stops form's reloading behavior
-    message.innerText = ""; //empty the test of msg element
-    const guess = letterInput.value; //grab what was entered in input
-    const goodGuess = validateInput(guess); //make sure input is a single letter
-
-    if (goodGuess){
-        makeGuess(guess);
+  };
+  
+  placeholder(word);
+  
+  guessLetterButton.addEventListener("click", function (e) {
+    e.preventDefault();
+    // Empty message paragraph
+    message.innerText = "";
+    // Let's grab what was entered in the input
+    const guess = letterInput.value;
+    // Let's make sure that it is a single letter
+    const goodGuess = validateInput(guess);
+  
+    if (goodGuess) {
+      // We've got a letter! Let's guess!
+      makeGuess(guess);
     }
-    letterInput.value= ""; //empty the value of the inputs
-});
-
-const validateInput = function (input) {
-    const acceptedLetter = /[a-zA-Z]/; // this is using a "regular expression"
-    if (input.length === 0){
-        //is the input empy?
-        message.innerText = "Please enter a letter.";
-    } else if (input.lenth > 1) {
-        //did they type more than one letter?
-        message.innerText = "Please enter a single letter.";
+    letterInput.value = "";
+  });
+  
+  const validateInput = function (input) {
+    const acceptedLetter = /[a-zA-Z]/;
+    if (input.length === 0) {
+      // Is the input empty?
+      message.innerText = "Please enter a letter.";
+    } else if (input.length > 1) {
+      // Did you type more than one letter?
+      message.innerText = "Please enter a single letter.";
     } else if (!input.match(acceptedLetter)) {
-        //did they type a number, special charactor, or non-letter text?
-        message.innerText = "Please enter a letter from A to Z";
+      // Did you type a number, a special character or some other non letter thing?
+      message.innerText = "Please enter a letter from A to Z.";
     } else {
-        return input;
+      // We finally got a single letter, omg yay
+      return input;
     }
-};
-
-const makeGuess = function (guess) {
-    guess = guess.toUpperCase(); //converts all inputs to uppercase letters
-    if (guessedLetters.includes(guess)){ //checking if guessedLetters array already contains that letter
-        message.innerText = "You just picked that. Try again."
+  };
+  
+  const makeGuess = function (guess) {
+    guess = guess.toUpperCase();
+    if (guessedLetters.includes(guess)) {
+      message.innerText = "You already guessed that letter, silly. Try again.";
     } else {
-        guessedLetters.push(guess);
-        console.log(guessedLetters);
+      guessedLetters.push(guess);
+      console.log(guessedLetters);
+      showGuessedLetters();
+      updateWordInProgress(guessedLetters);
     }
-};
+  };
+  
+  const showGuessedLetters = function () {
+    // Clear the list first
+    guessedLettersElement.innerHTML = "";
+    for (const letter of guessedLetters) {
+      const li = document.createElement("li");
+      li.innerText = letter;
+      guessedLettersElement.append(li);
+    }
+  };
+  
+  const updateWordInProgress = function (guessedLetters) {
+    const wordUpper = word.toUpperCase();
+    const wordArray = wordUpper.split("");
+    const revealWord = [];
+    for (const letter of wordArray) {
+      if (guessedLetters.includes(letter)) {
+        revealWord.push(letter.toUpperCase());
+      } else {
+        revealWord.push("●");
+      }
+    }
+    // console.log(revealWord);
+    wordInProgress.innerText = revealWord.join("");
+    checkIfWin();
+  };
+  
+  const checkIfWin = function () {
+    if (word.toUpperCase() === wordInProgress.innerText) {
+      message.classList.add("win");
+      message.innerHTML = `<p class="highlight">You guessed the correct word! Congrats!</p>`;
+    }
+  };
